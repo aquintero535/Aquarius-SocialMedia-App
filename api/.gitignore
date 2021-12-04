@@ -1,0 +1,9 @@
+node_modules
+app/database/sql-scripts
+public/images/profile_images
+public/images/profile_headers
+public/files/
+.env
+client/
+temp.js
+

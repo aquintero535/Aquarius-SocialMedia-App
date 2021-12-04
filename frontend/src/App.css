@@ -1,0 +1,21 @@
+.App {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+}
+
+.main {
+  margin-top: 4rem;
+}
+
+.App-link {
+  color: #000000;
+}
+
+.post:hover {
+  cursor:pointer;
+}
+
+a:link, a:visited {
+  color: black;
+}
+
