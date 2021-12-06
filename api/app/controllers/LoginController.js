@@ -8,7 +8,7 @@ const moduleLogger = logger.child({module: 'LoginController'});
 
 const secretKey = process.env.JWT_SECRET_KEY;
 const expiresIn = process.env.JWT_EXPIRES_IN;
-const saltRounds = process.env.PWD_SALT_ROUNDS || 10;
+const saltRounds = parseInt(process.env.PWD_SALT_ROUNDS || 10);
 
 const signIn = async function(req, res) {
     let conn = null;
@@ -42,7 +42,7 @@ const signIn = async function(req, res) {
         res.status(200).json({data: {user: {...userData[0], user_id: user[0].user_id}, auth_token: token}});
     } catch (error) {
         moduleLogger.error(error, 'Unexpected error when signing in');
-        res.status(500).json({errors: [{message: 'Unexpected error'}]});
+        res.status(500).json({error: {message: 'Unexpected error.'}});
     } finally {
         conn?.release();
     }
@@ -68,7 +68,7 @@ const signUp = async function(req, res) {
         res.status(200).json({data: {success: true, message: 'Nueva cuenta creada.'}});
     } catch (error) {
         moduleLogger.error(error, 'Sign up failed.');
-        res.status(500).json({errors: [{message: 'Unexpected error'}]});
+        res.status(500).json({error: {message: 'Unexpected error.'}});
     } finally {
         conn?.release();
     }

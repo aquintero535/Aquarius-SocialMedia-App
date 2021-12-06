@@ -8,7 +8,7 @@ const initForm = {
     password: "",
     gender: "M",
     day: 1,
-    month: 'enero',
+    month: 1,
     year: 2021,
     termsChecked: false
 };
