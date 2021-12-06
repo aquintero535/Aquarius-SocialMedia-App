@@ -1,9 +1,7 @@
 node_modules
 app/database/sql-scripts
-public/images/profile_images
-public/images/profile_headers
-public/files/
+public/files/*
+!public/files/default-profile-image.jpg
+!public/files/default-header.jpg
 .env
-client/
-temp.js
 

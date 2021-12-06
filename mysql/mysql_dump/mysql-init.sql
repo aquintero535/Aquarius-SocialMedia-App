@@ -14,7 +14,7 @@ CREATE TABLE `users_profiles`(
     `profile_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT UNIQUE NOT NULL,
     `profile_image` VARCHAR(150) NOT NULL DEFAULT '/files/default-profile-image.jpg',
-    `profile_header` VARCHAR(150) NOT NULL DEFAULT '/files/placeholder.jpg',
+    `profile_header` VARCHAR(150) NOT NULL DEFAULT '/files/default-header.jpg',
     `profile_name` VARCHAR(40) NOT NULL DEFAULT 'New user',
     `profile_bio` VARCHAR(500) NOT NULL DEFAULT '',
     `username` VARCHAR(20) UNIQUE NOT NULL,
