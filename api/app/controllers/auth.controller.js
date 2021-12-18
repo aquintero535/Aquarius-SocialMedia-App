@@ -1,14 +1,9 @@
-const { validationResult } = require('express-validator');
 const { deleteAtFromUsername } = require('../utils/fixUsername');
 const logger = require('../helpers/logger').logger.child({module: 'LoginController'});
 
 const AuthService = require('../services/auth.service');
 
 const signIn = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({error: {message: 'Los datos introducidos no son válidos.'}});
-    }
     let usernameOrEmail = deleteAtFromUsername(req.body.username);
 
     try {
@@ -24,8 +19,6 @@ const signIn = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) throw errors;
     let birthday = new Date(req.body.year, req.body.month-1, req.body.day);
     let accountValues = {email: req.body.email, birthday: birthday, gender: req.body.gender};
     let profileValues = {profile_name: req.body.name, username: req.body.username};

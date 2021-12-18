@@ -1,6 +1,7 @@
 const express = require('express');
 const PostsController = require('../controllers/posts.controller');
 const ProfileController = require('../controllers/profile.controller');
+const handleValidationError = require('../helpers/handleValidationError');
 const { newPostValidators, newReplyValidators } = require('../utils/validations');
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.get('/profile/:username/posts', PostsController.getUserPosts);
 router
 .route('/posts')
 .get(PostsController.getHomePosts) //Obtener feed de posts.
-.post(newPostValidators, PostsController.submitPost); //Subir post
+.post(newPostValidators, handleValidationError, PostsController.submitPost); //Subir post
 
 router.route('/posts/:post_id')
 .get(PostsController.getPost) //Obtener un post específico.
@@ -38,7 +39,7 @@ router.route('/posts/:post_id')
 //Obtener las respuestas de un post.
 router.route('/posts/:post_id/replies')
 .get(PostsController.getPostReplies)
-.post(newReplyValidators, PostsController.submitReply)
+.post(newReplyValidators, handleValidationError, PostsController.submitReply)
 .delete(PostsController.deleteReply);
 
 router

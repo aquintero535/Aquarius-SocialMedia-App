@@ -1,4 +1,3 @@
-const { validationResult } = require('express-validator');
 const { deleteAtFromUsername } = require('../utils/fixUsername');
 const logger = require('../helpers/logger').logger.child({module: 'PostsController'});
 
@@ -32,10 +31,6 @@ const getUserPosts = async (req, res, next) => {
 }   
 
 const submitPost = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({error: {message: 'Los datos introducidos no son válidos.'}});
-    }
     try {
         const post = await PostsService.submit(req.user.user_id, req.body.post_body);
         res.status(200).json({success: true, data: post});
@@ -46,10 +41,6 @@ const submitPost = async (req, res, next) => {
 }
 
 const submitReply = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({error: {message: 'Los datos introducidos no son válidos.'}});
-    }
     try {
         const post = await PostsService.submitReply(req.user.user_id, req.body.post_body, req.params.post_id);
         res.status(200).json({success: true, data: post});
@@ -60,10 +51,6 @@ const submitReply = async (req, res, next) => {
 };
 
 const deleteReply = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({error: {message: 'Los datos introducidos no son válidos.'}});
-    }
     try {   
         await PostsService.deleteReply(req.body.post_id, req.params.post_id);
         res.status(200).json({success: true, data: {message: 'Your post has been deleted.'}});

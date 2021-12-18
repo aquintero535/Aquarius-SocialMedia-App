@@ -1,22 +1,22 @@
-const db = require('../database/db-connection');
+const { doQuery } = require('../database/db-connection');
 
-const createPost = async (userId, postBody, newPostId) => {
-    await db.query('INSERT INTO posts (post_id, profile_id, body) VALUES (?, ?, ?);'
-    , [newPostId, userId, postBody]);
+const createPost = async (userId, postBody, newPostId, conn) => {
+    await doQuery('INSERT INTO posts (post_id, profile_id, body) VALUES (?, ?, ?);'
+    , [newPostId, userId, postBody], conn);
 }
 
-const createReply = async (newPostId, postBody, postId, userId) => {
+const createReply = async (newPostId, postBody, postId, userId, conn) => {
     const arguments = [newPostId, userId, postBody, postId];
-    await db.query('CALL newReply(?, ?, ?, ?)', arguments);
+    await doQuery('CALL newReply(?, ?, ?, ?)', arguments, conn);
 }
 
-const deleteReply = async (postId, postIdReplyTo) => {
+const deleteReply = async (postId, postIdReplyTo, conn) => {
     const arguments = [postId, postIdReplyTo];
-    await db.query('CALL deleteReply(?, ?)', arguments);
+    await doQuery('CALL deleteReply(?, ?)', arguments, conn);
 }
 
-const getPostFromId = async (userId, postId) => {
-    const [post] = await db.query(`
+const getPostFromId = async (userId, postId, conn) => {
+    const [post] = await doQuery(`
         SELECT 
         p.post_id,
         p.body,
@@ -35,12 +35,12 @@ const getPostFromId = async (userId, postId) => {
         INNER JOIN users_profiles as up ON p.profile_id = up.profile_id
         LEFT OUTER JOIN users_profiles as up_parent ON up_parent.profile_id in (select profile_id from posts where post_id = p.reply_to)
         WHERE p.post_id = ? LIMIT 1;
-        `, [userId, userId, postId]);
+        `, [userId, userId, postId], conn);
     return post[0];
 }
 
-const getPostsFromMine = async (userId) => {
-    const [posts] = await db.query(`
+const getPostsFromMine = async (userId, conn) => {
+    const [posts] = await doQuery(`
         SELECT 
         p.post_id,
         p.body,
@@ -59,12 +59,12 @@ const getPostsFromMine = async (userId) => {
         INNER JOIN users_profiles as up ON p.profile_id = up.profile_id
         LEFT OUTER JOIN users_profiles AS up_parent ON up_parent.profile_id in (select profile_id from posts where post_id = p.reply_to)
         WHERE p.profile_id = ?;
-    `, [userId]);
+    `, [userId], conn);
     return posts;
 }
 
-const getPostsFromFollowing = async (userId) => {
-    const [posts] = await db.query(`
+const getPostsFromFollowing = async (userId, conn) => {
+    const [posts] = await doQuery(`
         SELECT p.post_id,
         p.body,
         p.likes,
@@ -83,12 +83,12 @@ const getPostsFromFollowing = async (userId) => {
         LEFT OUTER JOIN users_profiles AS up_parent ON up_parent.profile_id in (select profile_id from posts where post_id = p.reply_to)
         LEFT OUTER JOIN users_follows as uf ON uf.profile_id_two = up.profile_id
         WHERE uf.profile_id_one = ?;
-    `, [userId]);
+    `, [userId], conn);
     return posts;
 }
 
-const getRepostsFromFollowing = async (userId) => {
-    const [posts] = await db.query(`
+const getRepostsFromFollowing = async (userId, conn) => {
+    const [posts] = await doQuery(`
         SELECT
         p.post_id,
         p.body,
@@ -113,12 +113,12 @@ const getRepostsFromFollowing = async (userId) => {
         INNER JOIN users_follows as uf ON uf.profile_id_two = rp.profile_id
         WHERE p.post_id in (select post_id from reposts where profile_id in (select profile_id_two from users_follows where profile_id_one = ?))
         AND uf.profile_id_one = ?;
-    `, [userId, userId]);
+    `, [userId, userId], conn);
     return posts;
 }
 
-const getPostsFromUser = async (userId, username) => {
-    const [posts] = await db.query(`
+const getPostsFromUser = async (userId, username, conn) => {
+    const [posts] = await doQuery(`
         SELECT 
         p.post_id,
         p.body,
@@ -137,12 +137,12 @@ const getPostsFromUser = async (userId, username) => {
         INNER JOIN users_profiles AS up ON p.profile_id = up.profile_id
         LEFT OUTER JOIN users_profiles AS up_parent ON up_parent.profile_id in (select profile_id from posts where post_id = p.reply_to)
         WHERE up.username = ?
-    `, [userId, userId, username]);
+    `, [userId, userId, username], conn);
     return posts;
 };
 
-const getRepostsFromUser = async (userId, username) => {
-    const [posts] = await db.query(`
+const getRepostsFromUser = async (userId, username, conn) => {
+    const [posts] = await doQuery(`
         SELECT 
         p.post_id,
         p.body,
@@ -165,16 +165,16 @@ const getRepostsFromUser = async (userId, username) => {
         LEFT OUTER JOIN users_profiles AS up_reposted ON up_reposted.profile_id = rp.profile_id
         WHERE p.post_id in (SELECT post_id from reposts where profile_id in (select profile_id from users_profiles where username = ?))
         AND rp.profile_id in (select profile_id from users_profiles where username = ?)
-    `, [userId, userId, username, username]);
+    `, [userId, userId, username, username], conn);
     return posts;
 };
 
-const deletePost = async (postId, userId) => {
-    await db.query('DELETE FROM posts WHERE post_id = ? AND profile_id = ?;', [postId, userId]);
+const deletePost = async (postId, userId, conn) => {
+    await doQuery('DELETE FROM posts WHERE post_id = ? AND profile_id = ?;', [postId, userId], conn);
 }
 
-const getPostReplies = async (postId, userId) => {
-    const [posts] = await db.query(`
+const getPostReplies = async (postId, userId, conn) => {
+    const [posts] = await doQuery(`
         SELECT 
         p.post_id,
         p.body,
@@ -192,24 +192,24 @@ const getPostReplies = async (postId, userId) => {
         FROM posts as p
         INNER JOIN users_profiles as up ON p.profile_id = up.profile_id
         WHERE p.reply_to = ?;
-    `, [userId, userId, postId]);
+    `, [userId, userId, postId], conn);
     return posts;
 }
 
-const likePost = async (postId, userId) => {
-    await db.query('INSERT INTO posts_likes (profile_id, post_id) VALUES (?, ?);', [userId, postId]);
+const likePost = async (postId, userId, conn) => {
+    await doQuery('INSERT INTO posts_likes (profile_id, post_id) VALUES (?, ?);', [userId, postId], conn);
 }
 
-const unlikePost = async (postId, userId) => {
-    await db.query('DELETE FROM posts_likes WHERE profile_id = ? AND post_id = ?;', [userId, postId]);
+const unlikePost = async (postId, userId, conn) => {
+    await doQuery('DELETE FROM posts_likes WHERE profile_id = ? AND post_id = ?;', [userId, postId], conn);
 }
 
-const createRepost = async (postId, userId) => {
-    await db.query('INSERT INTO reposts (profile_id, post_id) VALUES (?, ?);', [userId, postId]);
+const createRepost = async (postId, userId, conn) => {
+    await doQuery('INSERT INTO reposts (profile_id, post_id) VALUES (?, ?);', [userId, postId], conn);
 }
 
-const deleteRepost = async (postId, userId) => {
-    await db.query('DELETE FROM reposts WHERE profile_id = ? AND post_id = ?;', [userId, postId]);
+const deleteRepost = async (postId, userId, conn) => {
+    await doQuery('DELETE FROM reposts WHERE profile_id = ? AND post_id = ?;', [userId, postId], conn);
 }
 
 module.exports = {

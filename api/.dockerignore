@@ -2,4 +2,3 @@ client/
 node_modules/
 .gitignore
 Dockerfile
-temp.js

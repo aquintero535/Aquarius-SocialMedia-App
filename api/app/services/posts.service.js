@@ -1,3 +1,4 @@
+const db = require('../database/db-connection');
 const logger = require('../helpers/logger').logger.child({module: 'PostsService'});
 const Posts = require('../models/post.model');
 const { nanoid } = require('nanoid');
@@ -5,10 +6,12 @@ const { nanoid } = require('nanoid');
 const submit = async (userId, postBody) => {
     try {
         const newPostId = nanoid(16);
-        await Posts.createPost(userId, postBody, newPostId);
+        let conn = await db.pool.getConnection();
+        await Posts.createPost(userId, postBody, newPostId, conn);
         logger.debug({userId, postBody}, 'Post submitted.');
         logger.debug({userId, postBody}, 'Querying new post...');
-        const post = await Posts.getPostFromId(userId, newPostId);
+        const post = await Posts.getPostFromId(userId, newPostId, conn);
+        conn.release();
         logger.debug(post, 'Data from submitted post: ');
         return post;
     } catch (error) {

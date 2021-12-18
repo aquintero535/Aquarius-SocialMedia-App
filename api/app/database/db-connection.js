@@ -21,6 +21,10 @@ pool.on('acquire', (connection) => {
 
 pool.on('release', (connection) => {
     logger.debug({thread_id: connection.threadId}, 'Connection to database released');
-}); 
+});
 
-module.exports = pool;
+const doQuery = async (query, parameters, conn) => {
+    return (conn) ? await conn.query(query, parameters) : pool.query(query, parameters);
+}
+
+module.exports = {pool, doQuery};

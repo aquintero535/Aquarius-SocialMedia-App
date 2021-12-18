@@ -13,8 +13,9 @@ const saltRounds = parseInt(process.env.PWD_SALT_ROUNDS || 10);
 
 
 const signIn = async (usernameOrEmail, password) => {
-    try {        
-        const user = await User.findOneByUsernameOrEmail(usernameOrEmail);
+    try {
+        let conn = await db.pool.getConnection();        
+        const user = await User.findOneByUsernameOrEmail(usernameOrEmail, conn);
         if (!user) {
             logger.debug({usernameOrEmail}, 'User not found.');
             return [null, 'INVALID_DATA'];
@@ -24,7 +25,8 @@ const signIn = async (usernameOrEmail, password) => {
             logger.debug('Password doesn\'t match');
             return [null, 'INVALID_DATA'];
         }
-        const userProfile = await UserProfile.findOneById(user.user_id);
+        const userProfile = await UserProfile.findOneById(user.user_id, conn);
+        conn.release();
         logger.debug('Generating new token: ', {expiresIn});
         const token = jwt.sign({user_id: user.user_id}, secretKey, {expiresIn});
         const data = {user: {...userProfile, user_id: user.user_id}, auth_token: token};
@@ -41,11 +43,13 @@ const signUp = async (accountValues, profileValues, password) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         logger.debug({accountValues}, 'Creating new user account...');
         accountValues.password = hashedPassword;
-        const newUserId = await User.createUser(accountValues);
+        let conn = await db.pool.getConnection();
+        const newUserId = await User.createUser(accountValues, conn);
         logger.debug({user_id: newUserId}, 'New user account created.');
         profileValues.user_id = newUserId;
         logger.debug({profileValues}, 'Creating new user profile...');
         await UserProfile.createProfile(profileValues);
+        conn.release();
         logger.debug({username: profileValues.username}, 'New user profile created.');
     } catch (error) {
         logger.error(error, 'Unexpected error when signing up.');
