@@ -10,7 +10,7 @@ const withAuth = (req, res, next) => {
             moduleLogger.error('You have to be signed in to perform this action.');
             return res.status(401).json({errors: [{message: 'You have to be signed in to perform this action.'}]});
         }
-        req.user = user;
+        req.user = {user_id: user};
         next();
     })(req, res, next);
 };

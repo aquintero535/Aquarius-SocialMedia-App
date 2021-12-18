@@ -5,7 +5,6 @@ const signInValidators = [
     check('password').isString().not().isEmpty().trim()
 ];
 
-
 const signUpValidators = [
     check('name').isString().not().isEmpty().trim(),
     check('username').isString().isAlphanumeric("az-AZ", {ignore: '_-'}).isLength({min: 3, max: 16}).trim(),
@@ -34,4 +33,10 @@ const deleteReplyValidators = [
     check('replied_post_id').isString().not().isEmpty().trim()
 ]
 
-module.exports = {signInValidators, signUpValidators, newPostValidators, newReplyValidators, deleteReplyValidators};
+module.exports = {
+    signInValidators,
+    signUpValidators,
+    newPostValidators,
+    newReplyValidators,
+    deleteReplyValidators
+};

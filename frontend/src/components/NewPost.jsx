@@ -4,7 +4,7 @@ import { ApiService } from '../services/ApiService';
 
 
 const NewPost = ({appendPost}) => {
-    const [postBody, setPostBody] = useState(null);
+    const [postBody, setPostBody] = useState('');
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);

@@ -43,9 +43,14 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/api', withAuth, apiRoutes);
 
-app.use(function(req, res, next) {
+app.use((err, req, res, next) => {
+  logger.error(err, 'Something failed.');
+  res.status(500).json({error: {message: "Unexpected error."}});
+});
+
+app.use((req, res, next) => {
   logger.error('Invalid route.');
-  res.status(404).json({errors: [{message: 'Invalid route.'}]});
+  res.status(404).json({error: {message: 'Invalid route.'}});
 });
 
 module.exports = app;

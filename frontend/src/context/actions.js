@@ -16,7 +16,7 @@ export const login = (dispatch, loginPayload) => {
             return Promise.resolve(json.data);
         } else return Promise.reject(json);
     }).catch((error) => {
-        let err = (error.errors) ? error.errors[0].message : error.message;
+        let err = (error.error) ? error.error.message : error.message;
         dispatch({type: 'LOGIN_ERROR', error: err});
         return Promise.reject(err);
     });
@@ -27,12 +27,12 @@ export const signup = (form) => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(form)
-    }).then((res) => res.json())
+    }).then((res) => (res.ok) ? {} : res.json())
     .then((json) => {
-        if (json.errors) return Promise.reject(json); 
+        if (json.error) return Promise.reject(json); 
         else return Promise.resolve(json);
     }).catch((err) => {
-        if (!err.errors) return Promise.reject([{message: err.toString()}]);
+        if (!err.error) return Promise.reject([{message: err.toString()}]);
         else return Promise.reject(err.errors);
     });
 }

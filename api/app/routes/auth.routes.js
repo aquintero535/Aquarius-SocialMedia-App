@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signIn, signUp } = require('../controllers/LoginController');
+const { signIn, signUp } = require('../controllers/auth.controller');
 const { signUpValidators, signInValidators } = require('../utils/validations');
 
 router.post('/signin', signInValidators, signIn);

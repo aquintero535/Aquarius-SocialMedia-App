@@ -19,7 +19,7 @@ const SignUp = (props) => {
             console.log(result);
             props.history.push('/home');
         })
-        .catch((err) => setError(err))
+        .catch((err) => console.error(err))
         .finally(() => setLoading(false));
     };
 
