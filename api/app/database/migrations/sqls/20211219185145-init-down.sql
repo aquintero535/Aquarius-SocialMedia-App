@@ -1,0 +1,20 @@
+/* Replace with your SQL commands */
+
+DROP TABLE IF EXISTS `users_follows`;
+DROP TABLE IF EXISTS `reposts`;
+DROP TABLE IF EXISTS `posts_likes`;
+DROP TABLE IF EXISTS `posts`;
+DROP TABLE IF EXISTS `users_profiles`;
+DROP TABLE IF EXISTS `users`;
+
+DROP TRIGGER IF EXISTS newLike;
+DROP TRIGGER IF EXISTS deleteLike;
+DROP TRIGGER IF EXISTS newRepost;
+DROP TRIGGER IF EXISTS deleteRepost;
+DROP TRIGGER IF EXISTS newFollow;
+DROP TRIGGER IF EXISTS deleteFollow;
+DROP PROCEDURE IF EXISTS newReply;
+DROP PROCEDURE IF EXISTS deleteReply;
+
+
+

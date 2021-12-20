@@ -1,6 +1,21 @@
 version: "3.7"
 
 services:
+  migration:
+    container_name: migration
+    build:
+      context: ./api
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASS=bMdX3B4GWTfzKTfm
+      - DB_PORT=3306
+      - DB_NAME=aquarius
+    command:
+      - /api/app/database/migrations/migrate.sh
+
   api:
     container_name: aquarius-api-dev
     build: ./api
@@ -23,15 +38,16 @@ services:
       - "5000:5000"
     depends_on:
       - mysql
+      - migration
 
   mysql:
     container_name: aquarius-mysql-dev
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=bMdX3B4GWTfzKTfm
+      - MYSQL_DATABASE=aquarius
     volumes:
       - './mysql/mysql_data:/var/lib/mysql'
-      - './mysql/mysql_dump:/docker-entrypoint-initdb.d'
     ports:
       - "3306:3306"
   
