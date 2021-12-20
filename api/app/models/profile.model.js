@@ -1,6 +1,6 @@
 const {doQuery} = require('../database/db-connection');
 
-const createProfile = async (profileValues) => {
+const createProfile = async (profileValues, conn) => {
     await doQuery('INSERT INTO users_profiles SET ?', [profileValues], conn);
 }
 

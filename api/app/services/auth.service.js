@@ -48,7 +48,7 @@ const signUp = async (accountValues, profileValues, password) => {
         logger.debug({user_id: newUserId}, 'New user account created.');
         profileValues.user_id = newUserId;
         logger.debug({profileValues}, 'Creating new user profile...');
-        await UserProfile.createProfile(profileValues);
+        await UserProfile.createProfile(profileValues, conn);
         conn.release();
         logger.debug({username: profileValues.username}, 'New user profile created.');
     } catch (error) {
