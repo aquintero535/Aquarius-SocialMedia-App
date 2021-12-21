@@ -47,7 +47,10 @@ const deleteReply = async function(postId, post_id_reply_to) {
 const getPost = async (userId, postId) => {
     try {
         const post = await Posts.getPostFromId(userId, postId);
-        return post;
+        if (!post) {
+            return [null, 'POST_NOT_FOUND'];
+        }
+        return [post, null];
     } catch (error) {
         logger.error(error, 'Unexpected error when querying post.');
         throw new Error('Unexpected error when querying post.');

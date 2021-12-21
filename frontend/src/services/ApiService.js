@@ -80,13 +80,12 @@ export class ApiService {
         return helpHttp().get(`${API_URL}/api/profile/${username}/followers`, defaultHeaders);
     }
 
-    static editUserProfile = (username, form, userId) => {
+    static editUserProfile = (username, form) => {
         let data = new FormData();
         if (form.profile_header) data.append('profile_header', form.profile_header);
         if (form.profile_image) data.append('profile_image', form.profile_image);
         data.append('profile_name', form.profile_name);
         data.append('profile_bio', form.profile_bio);
-        data.append('user_id', userId);
         return helpUpload(`${API_URL}/api/profile/${username}`, data);
     }
 

@@ -7,7 +7,10 @@ const ProfileService = require('../services/profile.service');
 const getUserProfile = async (req, res, next) => {
     let username = deleteAtFromUsername(req.params.username);
     try {
-        const profile = await ProfileService.getUserProfile(username, req.user.user_id);
+        const [profile, error] = await ProfileService.getUserProfile(username, req.user.user_id);
+        if (error) {
+            return res.status(404).json({data: {message: "This user profile doesn't exist."}});
+        }
         res.status(200).json({data: profile});
     } catch (error) {
         logger.error(error, 'Unexpected error when querying an user profile.');
@@ -20,11 +23,6 @@ const updateProfile = async (req, res, next) => {
         logger.debug('Parsing request form...');
         formidable().parse(req, async function(err, fields, files) {
             if (err) throw err;
-            if (req.user.user_id != fields.user_id) {
-                logger.error('Cannot update user profile with an user id different from signed in user id.');
-                res.status(401).end();
-                return;
-            }
             const profile = await ProfileService.updateProfile(req.user.user_id, fields, files);
             return res.status(200).json({success: true, data: {message: 'Profile updated', ...profile}});
         });
@@ -72,7 +70,7 @@ const unfollowUser = async (req, res, next) => {
     if (req.body.user_to_follow_id) {
         try {
             await ProfileService.unfollowUser(req.body.user_to_follow_id, req.user.user_id);
-            res.status(200).json({data: {following: true, message: "User unfollowed"}}); 
+            res.status(200).json({data: {following: false, message: "User unfollowed"}}); 
         } catch (error) {
             logger.error(error, 'Unexpected error when unfollowing an account.');
             next(error);

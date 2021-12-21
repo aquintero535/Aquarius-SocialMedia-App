@@ -63,7 +63,10 @@ const deleteReply = async (req, res, next) => {
 const getPost = async (req, res, next) => {
     if (req.params.post_id) {
         try {
-            const post = await PostsService.getPost(req.user.user_id, req.params.post_id);
+            const [post, error] = await PostsService.getPost(req.user.user_id, req.params.post_id);
+            if (error === 'POST_NOT_FOUND') {
+                return res.status(404).json({data: {message: "This post doesn't exist."}});
+            }
             return res.status(200).json({data: post});
         } catch (error) {
             logger.error(error, 'Unexpected error when querying post.');

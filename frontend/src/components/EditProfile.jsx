@@ -36,7 +36,7 @@ const EditProfile = ({show, onHide, profile, setProfile, user}) => {
     const handleSubmit = (ev) => {
         ev.preventDefault();
         setLoading(true);
-        ApiService.editUserProfile(user, form, profile.user_id)
+        ApiService.editUserProfile(user, form)
         .then((res) => {
             if (res.success) {
                 setProfile({

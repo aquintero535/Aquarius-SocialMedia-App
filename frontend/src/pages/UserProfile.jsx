@@ -28,7 +28,7 @@ const UserProfile = () => {
     const [profile, setProfile] = useState(profilePlaceholder);
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [error, setError] = useState(null);
-    const[showingEditProfile, setShowingEditProfile] = useState(false);
+    const [showingEditProfile, setShowingEditProfile] = useState(false);
     const [following, setFollowing] = useState(false);
     const myUserId = useAuthState().user.user_id;
 
@@ -37,7 +37,7 @@ const UserProfile = () => {
         .then((res) => {
             if (res.data) {
                 setProfile(res.data)
-                setFollowing(Boolean(res.is_following));
+                setFollowing(Boolean(res.data.is_following));
             }
         }).catch(err => setError(err))
         .finally(() => setLoadingProfile(false));

@@ -15,5 +15,10 @@ const logger = bunyan.createLogger({
     ],
     src: process.env.NODE_ENV !== 'production' ? true : false
 })
+if (process.env.MUTE_LOGGER === "true"){
+    logger.level(bunyan.FATAL+1);
+}
+
 logger.info({NODE_ENV: process.env.NODE_ENV}, 'API Logger loaded.');
+
 module.exports = { bunyan, logger };

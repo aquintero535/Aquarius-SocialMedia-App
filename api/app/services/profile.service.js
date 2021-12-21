@@ -6,7 +6,10 @@ const UserProfile = require('../models/profile.model');
 const getUserProfile = async (username, userId) => {
     try {
         const profile = await UserProfile.getUserProfile(username, userId);
-        return profile;
+        if (!profile) {
+            return [null, 'USER_NOT_FOUND'];
+        }
+        return [profile, null];
     } catch (error) {
         logger.error(error, 'Unexpected error when querying an user profile.');
         throw new Error('Unexpected error when querying an user profile.');
