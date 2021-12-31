@@ -1,16 +1,14 @@
 const formidable = require('formidable');
-const { deleteAtFromUsername } = require('../utils/fixUsername');
+const { BadRequestError } = require('../../utils/api-errors');
+const { deleteAtFromUsername } = require('../../utils/fixUsername');
 
-const logger = require('../helpers/logger').logger.child({module: 'ProfileController'});
-const ProfileService = require('../services/profile.service');
+const logger = require('../../helpers/logger').logger.child({module: 'ProfileController'});
+const ProfileService = require('./profile.service');
 
 const getUserProfile = async (req, res, next) => {
     let username = deleteAtFromUsername(req.params.username);
     try {
-        const [profile, error] = await ProfileService.getUserProfile(username, req.user.user_id);
-        if (error) {
-            return res.status(404).json({data: {message: "This user profile doesn't exist."}});
-        }
+        const profile = await ProfileService.getUserProfile(username, req.user.user_id);
         res.status(200).json({data: profile});
     } catch (error) {
         logger.error(error, 'Unexpected error when querying an user profile.');
@@ -55,27 +53,29 @@ const getFollowing = async (req, res, next) => {
 };
 
 const followUser = async (req, res, next) => {
-    if (req.body.user_to_follow_id) {
-        try {
-            await ProfileService.followUser(req.body.user_to_follow_id, req.user.user_id);
-            res.status(200).json({data: {following: true, message: "User followed"}}); 
-        } catch (error) {
-            logger.error(error, 'Unexpected error when following an account.');
-            next(error);
-        }
-    } else res.status(400).json({error: {message: 'User to follow ID is required.'}});
+    if (!req.body.user_to_follow_id) {
+        throw new BadRequestError('User to follow ID is required.');
+    }
+    try {
+        await ProfileService.followUser(req.body.user_to_follow_id, req.user.user_id);
+        res.status(200).json({data: {following: true, message: "User followed"}}); 
+    } catch (error) {
+        logger.error(error, 'Unexpected error when following an account.');
+        next(error);
+    }
 };
 
 const unfollowUser = async (req, res, next) => {
-    if (req.body.user_to_follow_id) {
-        try {
-            await ProfileService.unfollowUser(req.body.user_to_follow_id, req.user.user_id);
-            res.status(200).json({data: {following: false, message: "User unfollowed"}}); 
-        } catch (error) {
-            logger.error(error, 'Unexpected error when unfollowing an account.');
-            next(error);
-        }
-    } else res.status(400).json({error: {message: 'User to follow ID is required.'}});
+    if (!req.body.user_to_follow_id) {
+        throw new BadRequestError('User to follow ID is required.');
+    }
+    try {
+        await ProfileService.unfollowUser(req.body.user_to_follow_id, req.user.user_id);
+        res.status(200).json({data: {following: false, message: "User unfollowed"}}); 
+    } catch (error) {
+        logger.error(error, 'Unexpected error when unfollowing an account.');
+        next(error);
+    }
 };
 
 module.exports = {

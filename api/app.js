@@ -1,5 +1,6 @@
-/* require('dotenv').config(); */
+require('dotenv').config();
 const express = require('express');
+const helmet = require("helmet");
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,6 +10,8 @@ require('./app/lib/passport');
 const bunyanMiddleware = require('bunyan-middleware');
 const { logger } = require('./app/helpers/logger');
 const app = express();
+
+app.use(helmet())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -23,8 +26,10 @@ app.use(bunyanMiddleware({
   logger
 }));
 
-const authRoutes = require('./app/routes/auth.routes');
-const apiRoutes = require('./app/routes/api.routes');
+const authRoutes = require('./app/components/auth/auth.routes');
+const postsRoutes = require('./app/components/posts/posts.routes');
+const profileRoutes = require('./app/components/profile/profile.routes');
+const { ApiError } = require('./app/utils/api-errors');
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -40,11 +45,16 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
-app.use('/api', withAuth, apiRoutes);
+app.use('/api', withAuth, postsRoutes, profileRoutes);
+app.use('/api/ping', (req, res) => res.status(200).send({data: {message: 'pong!'}}));
 
 app.use((err, req, res, next) => {
   logger.error(err, 'Something failed.');
-  res.status(500).json({error: {message: "Unexpected error."}});
+  if (err instanceof ApiError) {
+    res.status(err.statusCode).json({error: {message: err.message}});
+  } else {
+    res.status(500).json({error: {message: 'Unexpected error.'}});
+  }
 });
 
 app.use((req, res, next) => {

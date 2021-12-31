@@ -1,17 +1,13 @@
-const { deleteAtFromUsername } = require('../utils/fixUsername');
-const logger = require('../helpers/logger').logger.child({module: 'LoginController'});
+const { deleteAtFromUsername } = require('../../utils/fixUsername');
+const logger = require('../../helpers/logger').logger.child({module: 'LoginController'});
 
-const AuthService = require('../services/auth.service');
+const AuthService = require('./auth.service');
 
 const signIn = async (req, res, next) => {
     let usernameOrEmail = deleteAtFromUsername(req.body.username);
-
     try {
-        let [data, error] = await AuthService.signIn(usernameOrEmail, req.body.password);
-        if (error === 'INVALID_DATA') {
-            return res.status(401).json({error: {message: 'Los datos introducidos no son válidos.'}});
-        }
-        return res.status(200).json({data});
+        const data = await AuthService.signIn(usernameOrEmail, req.body.password);
+        res.status(200).json({data});
     } catch (error) {
         logger.error('Login failed');
         next(error);

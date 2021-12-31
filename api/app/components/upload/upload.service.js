@@ -1,7 +1,7 @@
 const jimp = require('jimp');
 const publicDir = `./public`;
 
-const logger = require('../helpers/logger').logger.child({module: 'UploadService'});
+const logger = require('../../helpers/logger').logger.child({module: 'UploadService'});
 
 const uploadProfileHeader = async (profileHeader, userId) => {
     let tempPath = profileHeader.path;
@@ -28,4 +28,4 @@ const uploadProfileImage = async (profileImage, userId) => {
 module.exports = {
     uploadProfileHeader,
     uploadProfileImage
-}
+};

@@ -28,8 +28,8 @@ describe('check user services', () => {
             .expect(404)
             .expect('Content-Type', /json/)
             .then((res) => {
-                expect(res.body).to.have.property('data');
-                expect(res.body.data).to.have.property('message')
+                expect(res.body).to.have.property('error');
+                expect(res.body.error).to.have.property('message')
                     .to.be.equal("This user profile doesn't exist.");
                 done();
             }).catch((err) => done(err));

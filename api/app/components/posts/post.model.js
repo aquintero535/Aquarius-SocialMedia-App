@@ -1,4 +1,4 @@
-const { doQuery } = require('../database/db-connection');
+const { doQuery } = require('../../database/db-connection');
 
 const createPost = async (userId, postBody, newPostId, conn) => {
     await doQuery('INSERT INTO posts (post_id, profile_id, body) VALUES (?, ?, ?);'

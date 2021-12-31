@@ -88,7 +88,7 @@ describe('check posts services', () => {
                 request(app)
                 .get(`/api/posts/${tempNewPostId}`)
                 .auth(token, {type: "bearer"})
-                .expect(404, {data: {message: "This post doesn't exist."}}, done);
+                .expect(404, {error: {message: "This post doesn't exist."}}, done);
             }).catch((err) => done(err));
         }); 
     })
@@ -143,7 +143,7 @@ describe('check posts services', () => {
                 request(app)
                 .get(`/api/posts/${tempNewReplyId}`)
                 .auth(token, {type: "bearer"})
-                .expect(404, {data: {message: "This post doesn't exist."}}, done);
+                .expect(404, {error: {message: "This post doesn't exist."}}, done);
             }).catch((err) => done(err));
         });
     });

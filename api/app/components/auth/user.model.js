@@ -1,4 +1,4 @@
-const {doQuery} = require('../database/db-connection');
+const {doQuery} = require('../../database/db-connection');
 
 const createUser = async (accountValues, conn) => {
     const [resultNewAccount] = await doQuery('INSERT INTO users SET ?', [accountValues], conn);

@@ -66,3 +66,25 @@ describe('check sign up process', () => {
         .expect(400, done)
     });
 });
+
+describe("check protected endpoints", () => {
+    it("shouldn't access protected endpoints without a token", (done) => {
+        request(app)
+        .get('/api/posts')
+        .expect(401, {error: {message: 'You have to be signed in to perform this action.'}}, done);
+    })
+
+    it("shouldn't access protected endpoints without a valid token", (done) => {
+        request(app)
+        .get('/api/profile/admin')
+        .auth('random-token', {type: "bearer"})
+        .expect(401, {error: {message: 'You have to be signed in to perform this action.'}}, done);
+    })
+
+    it("should access protected endpoints with a valid token", (done) => {
+        request(app)
+        .get('/api/profile/admin')
+        .auth(token, {type: "bearer"})
+        .expect(200, done);
+    });
+});
