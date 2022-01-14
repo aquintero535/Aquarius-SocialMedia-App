@@ -8,13 +8,13 @@ Just execute this command in the root directory of the project:
 `docker-compose up -d`
 
 Docker will pull all images, create the containers and start all the services required to start the app.
-Once the containers are up, you now can access the app with the endpoints listed below.
+Wait until all the containers are up and the database migration process is complete, then you can access the app with the endpoints listed below.
 
 If you want to read server logs:
 
-`docker logs aquarius-api-dev`
+`docker logs -f aquarius-api-dev`
 
-Or replace aquarius-api-dev with any other container you want to read logs from.
+Or replace `aquarius-api-dev` with any other container you want to read logs from.
 
 ## Endpoints
 |Service|Endpoint|
