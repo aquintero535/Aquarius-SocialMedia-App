@@ -53,7 +53,7 @@ services:
     volumes:
       - './mysql/mysql_data:/var/lib/mysql'
     ports:
-      - "3306"
+      - "127.0.0.1:3306:3306"
     networks:
       - internal_network
   
@@ -81,7 +81,7 @@ services:
       - '/app/node_modules'
       - './frontend:/app'
     ports:
-      - "3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - api
     networks:
@@ -102,5 +102,5 @@ services:
 networks:
   external_network:
   internal_network:
-    internal: true
+    driver: bridge
   

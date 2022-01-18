@@ -5,16 +5,26 @@ Simple social media app built with MySQL, Node.js, Express, React and Docker.
 ## Start the app with Docker
 Just execute this command in the root directory of the project:
 
-`docker-compose up -d`
+`docker-compose up`
 
 Docker will pull all images, create the containers and start all the services required to start the app.
-Wait until all the containers are up and the database migration process is complete, then you can access the app with the endpoints listed below.
+Wait until all the containers are up and the **database migration process is complete**, then you can access the app with the endpoints listed below.
+
+To manually migrate the database, first get inside the API container:
+
+`docker exec -it aquarius-api-dev sh`
+
+Then execute this command to start the migration process:
+
+`npm run migrate:up`
 
 If you want to read server logs:
 
 `docker logs -f aquarius-api-dev`
 
 Or replace `aquarius-api-dev` with any other container you want to read logs from.
+
+***
 
 ## Endpoints
 |Service|Endpoint|
